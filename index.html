@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Govt Exam Photo & Signature Resizer | Free Online Tool</title>
+    <meta name="description" content="Resize photos for SSC, Bank, Railway and Govt Exam forms to 20KB, 50KB instantly for free.">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f4f7f6; color: #333; line-height: 1.6; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #1a73e8; margin-bottom: 10px; font-size: 24px; }
+        p.subtitle { text-align: center; color: #666; font-size: 14px; margin-bottom: 20px; }
+        .upload-area { border: 2px dashed #1a73e8; padding: 20px; text-align: center; border-radius: 8px; background: #f8fafd; cursor: pointer; margin-bottom: 20px; }
+        .upload-area input { display: none; }
+        .upload-btn { background: #1a73e8; color: #fff; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .controls { display: none; flex-direction: column; gap: 15px; margin-bottom: 20px; }
+        label { font-weight: bold; font-size: 14px; }
+        select, input[type="number"] { padding: 10px; border: 1px solid #ccc; border-radius: 5px; width: 100%; font-size: 16px; }
+        button.action-btn { background: #34a853; color: white; border: none; padding: 12px; font-size: 16px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; }
+        button.action-btn:hover { background: #2d8e47; }
+        #preview { text-align: center; margin-top: 15px; display: none; }
+        #preview img { max-width: 100%; max-height: 250px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px; }
+        .file-info { font-weight: bold; color: #d93025; font-size: 14px; margin-bottom: 10px; }
+        .footer { text-align: center; margin-top: 25px; font-size: 12px; color: #888; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Govt Exam Photo Resizer</h1>
+    <p class="subtitle">SSC, Bank, Railway Exam Form Ke Liye Photo/Signature KB Size Kam Karein</p>
+
+    <!-- Upload Box -->
+    <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+        <p style="margin-bottom: 10px;">📸 Apni Photo ya Signature Choose Karein</p>
+        <button class="upload-btn">Upload File</button>
+        <input type="file" id="fileInput" accept="image/*">
+    </div>
+
+    <!-- Controls -->
+    <div class="controls" id="controls">
+        <div>
+            <label for="targetKB">Target Size Choose Karein (KB):</label>
+            <select id="targetKB">
+                <option value="20">20 KB (Signature Ke Liye Best)</option>
+                <option value="50" selected>50 KB (Photo Ke Liye Best)</option>
+                <option value="100">100 KB</option>
+            </select>
+        </div>
+
+        <button class="action-btn" onclick="resizeImage()">Resize & Download</button>
+    </div>
+
+    <!-- Preview Area -->
+    <div id="preview">
+        <div class="file-info" id="fileInfo"></div>
+        <img id="outputImage" alt="Resized Preview">
+        <br>
+        <a id="downloadBtn" download="resized-photo.jpg" style="display:inline-block; background:#1a73e8; color:white; padding:10px 20px; text-decoration:none; border-radius:5px; font-weight:bold;">Download Image</a>
+    </div>
+
+    <div class="footer">
+        🔒 100% Safe & Private. Photos Sabhi Aapke Phone/Laptop Mein Hi Resize Hoti Hain.
+    </div>
+</div>
+
+<script>
+    const fileInput = document.getElementById('fileInput');
+    const controls = document.getElementById('controls');
+    const preview = document.getElementById('preview');
+    const outputImage = document.getElementById('outputImage');
+    const fileInfo = document.getElementById('fileInfo');
+    const downloadBtn = document.getElementById('downloadBtn');
+    let loadedImage = null;
+
+    fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                loadedImage = new Image();
+                loadedImage.src = event.target.result;
+                loadedImage.onload = function() {
+                    controls.style.display = 'flex';
+                    preview.style.display = 'none';
+                }
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+
+    function resizeImage() {
+        if (!loadedImage) return;
+
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        let width = loadedImage.width;
+        let height = loadedImage.height;
+
+        canvas.width = width;
+        canvas.height = height;
+        ctx.drawImage(loadedImage, 0, 0, width, height);
+
+        const targetKB = parseInt(document.getElementById('targetKB').value);
+        let quality = 0.9;
+        let dataUrl = canvas.toDataURL('image/jpeg', quality);
+
+        // Compress image to reach target KB
+        while (dataUrl.length / 1024 > targetKB && quality > 0.1) {
+            quality -= 0.05;
+            dataUrl = canvas.toDataURL('image/jpeg', quality);
+        }
+
+        const finalKB = Math.round(dataUrl.length / 1024);
+
+        outputImage.src = dataUrl;
+        downloadBtn.href = dataUrl;
+        fileInfo.innerText = `Naya Size: ~${finalKB} KB`;
+        preview.style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
